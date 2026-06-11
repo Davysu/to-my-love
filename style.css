@@ -1,0 +1,477 @@
+/* ==========================================================================
+   1. ESTILOS GERAIS, ANIMAÇÕES E EFEITO DE CLIQUE
+   ========================================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffe5ec, #ffc2d1, #ffb3c6);
+  font-family: "Quicksand", sans-serif;
+  overflow: hidden;
+  padding: 15px;
+  position: relative;
+}
+
+/* FIX: Garante que o container de fundo ocupe 100% da viewport sempre */
+.bg-hearts {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-heart {
+  position: absolute;
+  color: rgba(255, 71, 126, 0.15); /* Semitransparente fofo */
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+}
+
+/* Container Principal */
+.main-container {
+  width: 100%;
+  max-width: 420px;
+  min-height: 550px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
+  box-shadow: 0 15px 35px rgba(255, 75, 110, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  transition: all 0.5s ease;
+  overflow: hidden;
+}
+
+/* Corações gerados no clique */
+.click-heart {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  animation: heartClickFadeUp 1s ease-out forwards;
+}
+
+@keyframes heartClickFadeUp {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -150%) scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   2. TELAS E COMPONENTES COMUNS
+   ========================================================================== */
+.screen {
+  display: none;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+
+.screen.active {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.welcome-title {
+  font-family: "Comfortaa", sans-serif;
+  color: #ff477e;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.welcome-desc {
+  color: #6c757d;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+
+.btn-action {
+  background-color: #ff477e;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: "Comfortaa", sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 71, 126, 0.3);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+
+.btn-action:hover {
+  background-color: #ff0a54;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 10, 84, 0.4);
+}
+
+/* ==========================================================================
+   3. TELA DE BOAS-VINDAS (START)
+   ========================================================================== */
+.start-heart {
+  font-size: 80px;
+  color: #ff477e;
+  animation: pulse 1.5s infinite;
+  cursor: pointer;
+  margin-bottom: 25px;
+  z-index: 10;
+}
+
+/* ==========================================================================
+   4. SLIDES ROMÂNTICOS (Cross-fade)
+   ========================================================================== */
+.slides-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.polaroid-frame {
+  background: white;
+  padding: 12px;
+  padding-bottom: 25px;
+  border-radius: 4px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: rotate(-2deg);
+  transition: transform 0.3s ease;
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 25px;
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+}
+
+.polaroid-frame:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.polaroid-img {
+  width: calc(100% - 24px);
+  height: calc(100% - 37px);
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1px solid #f1f3f5;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  z-index: 1;
+}
+
+.polaroid-img.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.slide-phrase {
+  color: #495057;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  font-weight: 600;
+  min-height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease;
+}
+
+.progress-dots {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 25px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: #ffd0dc;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background-color: #ff477e;
+  transform: scale(1.2);
+  width: 20px;
+  border-radius: 10px;
+}
+/* ==========================================================================
+   5. CARTINHA INTERATIVA (ENVELOPE) - CORREÇÃO DE LAYOUT DOS BOTÕES
+   ========================================================================== */
+.envelope-wrapper {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  width: 100%;
+  max-width: 280px;
+  height: 180px;
+  margin-top: 40px;
+}
+
+.envelope {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #ff85a1;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.envelope::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 140px solid transparent;
+  border-right: 140px solid transparent;
+  border-top: 95px solid #ff5c8a;
+  transform-origin: top;
+  transition: transform 0.4s ease 0.2s;
+  z-index: 3;
+}
+
+.heart-seal {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  width: 32px;
+  height: 32px;
+  background-color: #ff0a54;
+  z-index: 4;
+  transition: opacity 0.3s ease;
+}
+.heart-seal::before,
+.heart-seal::after {
+  content: "";
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background-color: #ff0a54;
+  border-radius: 50%;
+}
+.heart-seal::before {
+  top: -16px;
+  left: 0;
+}
+.heart-seal::after {
+  left: 16px;
+  top: 0;
+}
+
+.click-me-pulse {
+  position: absolute;
+  bottom: -50px;
+  width: 100%;
+  text-align: center;
+  color: #ff477e;
+  font-weight: bold;
+  font-size: 1rem;
+  animation: bounce 1.5s infinite;
+}
+
+.envelope-wrapper.open .envelope::before {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+.envelope-wrapper.open .heart-seal {
+  opacity: 0;
+  pointer-events: none;
+}
+.envelope-wrapper.open .click-me-pulse {
+  display: none;
+}
+
+.letter-content {
+  position: absolute;
+  top: 10px;
+  left: 5%;
+  width: 90%;
+  height: 160px;
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: all 0.5s ease 0.4s;
+  z-index: 2;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.envelope-wrapper.open .letter-content {
+  opacity: 1;
+  transform: scale(1) translateY(-140px);
+  height: auto;
+  min-height: 290px;
+  z-index: 5;
+  box-shadow: 0 10px 30px rgba(255, 75, 110, 0.2);
+  border: 1px solid #ffd0dc;
+}
+
+.letter-content h2 {
+  color: #ff477e;
+  font-family: "Comfortaa", sans-serif;
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+.letter-content p {
+  color: #5a626a;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* FIX CRÍTICO: Nova estrutura de alinhamento para os botões */
+.decision-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  min-height: 60px;
+  position: relative; /* Mantém o escopo para quando o 'Não' virar absoluto */
+}
+
+.btn-decision {
+  display: inline-block;
+  padding: 12px 26px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: "Quicksand", sans-serif;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.1s;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.btn-yes {
+  background-color: #ff477e;
+  color: white;
+  box-shadow: 0 4px 10px rgba(255, 71, 126, 0.2);
+  z-index: 6;
+}
+
+.btn-yes:hover {
+  background-color: #ff0a54;
+}
+
+/* O botão começa no fluxo normal do documento, sem chance de quebrar */
+.btn-no {
+  background-color: #f1f3f5;
+  color: #868e96;
+  z-index: 6;
+}
+
+/* ==========================================================================
+   6. CREDITS FOOTER (Novo)
+   ========================================================================== */
+.credits-footer {
+  position: fixed;
+  bottom: 12px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(255, 71, 126, 0.6);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  pointer-events: none; /* Não interfere em toques perto da borda */
+}
+
+/* Animações e Responsividade */
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@media (max-width: 375px) {
+  .main-container {
+    padding: 15px;
+    min-height: 500px;
+  }
+  .polaroid-frame {
+    height: 220px;
+  }
+  .slide-phrase {
+    font-size: 0.95rem;
+    min-height: 60px;
+  }
+  .envelope-wrapper {
+    max-width: 250px;
+  }
+  .envelope::before {
+    border-left: 125px solid transparent;
+    border-right: 125px solid transparent;
+    border-top: 85px solid #ff5c8a;
+  }
+}
