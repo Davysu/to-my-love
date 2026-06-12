@@ -5,7 +5,7 @@ const slidesData = [
         phrase: "Quem diria que um simples 'oi' se transformaria no amor da minha vida? Desde aquele primeiro dia, tudo ficou mais bonito."
     },
     {
-        image: "/images/foto2.png", 
+        image: "images/foto2.png", 
         phrase: "Seja rindo das maiores bobeiras ou curtindo a calmaria de não fazer nada... O melhor lugar do mundo é sempre onde você está."
     },
     {
